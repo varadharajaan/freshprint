@@ -16,7 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableHystrixDashboard
 @EnableSwagger2
-public class FlightTicketBookingApplication extends SpringBootServletInitializer implements CommandLineRunner {
+public class FreshPrintApplication extends SpringBootServletInitializer implements CommandLineRunner {
 
     @Autowired
     DataInitializerImpl dataInitializer;
