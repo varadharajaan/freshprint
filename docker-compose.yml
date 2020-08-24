@@ -1,0 +1,63 @@
+version: '2'
+
+services:
+
+  invia-flight-booking:
+    build: .
+    container_name: invia-flight-booking
+    ports:
+      - "8080:8080"
+    links:
+      - logstash
+
+  logspout:
+    image: gliderlabs/logspout:v3
+    hostname: logspout
+    container_name: logspout
+    command: 'syslog://logstash:5000'
+    links:
+      - logstash
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock'
+    networks:
+      - net
+
+  logstash:
+      image: ludekvesely/logstash-json
+      hostname: logstash
+      container_name: logstash
+      environment:
+        - DROP_NON_JSON=false
+        - STDOUT=true
+      links:
+        - elasticsearch
+      networks:
+        - net
+
+  kibana:
+      image: kibana:4.1.2
+      hostname: kibana
+      container_name: kibana
+      environment:
+        - LOGSPOUT=ignore
+        - ELASTICSEARCH_URL=http://elasticsearch:9200
+      links:
+        - elasticsearch
+      ports:
+        - '5601:5601'
+      networks:
+        - net
+
+  elasticsearch:
+      image: elasticsearch:1.5.2
+      hostname: elasticsearch
+      container_name: elasticsearch
+      environment:
+        - LOGSPOUT=ignore
+      ports:
+        - '9200:9200'
+        - '9300:9300'
+      networks:
+        - net
+
+
